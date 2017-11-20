@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>Orders</h2>
+        @(Html.DevExtreme().DataGrid()  
+            .ID("grid")
+            .FilterRow(f => f.Visible(true))
+            .HeaderFilter(f => f.Visible(true))
+            .GroupPanel(p => p.Visible(true))
+            .ShowBorders(true)
+            .Paging(p => p.PageSize(6))
+            .DataSource(ds => ds
+                .WebApi()
+                .Controller("Orders")
+                .Key("Oid")
+                .LoadAction("GetAll")
+                .InsertAction(true)
+                .UpdateAction(true)
+                .DeleteAction(true))
+            .Columns(columns => {
+                columns.Add()
+                    .DataField("OrderNo")
+                    .DataType(GridColumnDataType.Number);
+                columns.Add()
+                    .DataField("OrderDate")
+                    .DataType(GridColumnDataType.Date);
+                columns.Add()
+                    .DataField("Client");
+                columns.Add()
+                    .DataField("TotalAmount")
+                    .DataType(GridColumnDataType.Number)
+                    .Format("currency").Precision(2)
+                    .AllowEditing(false);                                        
+            })
+            .Editing(editing => 
+                editing
+                .AllowAdding(true)
+                .AllowDeleting(true)
+                .AllowUpdating(true))                            
+        )
+    </div>    
+</div>
