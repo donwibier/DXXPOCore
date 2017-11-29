@@ -27,6 +27,8 @@ namespace web
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddXpoPooledDataLayer(MSSqlConnectionProvider.GetConnectionString("192.168.5.7", "test-user", "test123", "WebAppDemo"))                
+                .AddXpoUnitOfWork()
                 .AddMvc()
                 .AddJsonOptions(options =>
                 {
@@ -41,6 +43,8 @@ namespace web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseXpoDemoData();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -58,13 +62,6 @@ namespace web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-
-            // This is the point where XPO is initialized
-            XpoHelper.InitXpo(
-                SQLiteConnectionProvider.GetConnectionString("web.db"));
-
-            //XpoHelper.InitXpo(
-            //    MSSqlConnectionProvider.GetConnectionString("192.168.5.7", "test-user", "test123", "WebAppDemo"));
         }
     }
 }

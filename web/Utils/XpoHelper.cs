@@ -23,6 +23,12 @@ namespace web.Utils
 
         public static void InitXpo(string connectionString)
         {
+            XpoDefault.DataLayer = CreatePooledDataLayer(connectionString);
+            XpoDefault.Session = null;
+            CreateDemoData(() => new UnitOfWork());
+        }
+        public static ThreadSafeDataLayer CreatePooledDataLayer(string connectionString)
+        {
             var dictionary = PrepareDictionary();
 
             using (var updateDataLayer = XpoDefault.GetDataLayer(connectionString, dictionary, AutoCreateOption.DatabaseAndSchema))
@@ -32,27 +38,23 @@ namespace web.Utils
 
             string pooledConnectionString = XpoDefault.GetConnectionPoolString(connectionString);
             var dataStore = XpoDefault.GetConnectionProvider(pooledConnectionString, AutoCreateOption.SchemaAlreadyExists);
-            XpoDefault.DataLayer = new ThreadSafeDataLayer(dictionary, dataStore);
-            XpoDefault.Session = null;
-
-            CreateDemoData();
+            var dataLayer = new ThreadSafeDataLayer(dictionary, dataStore); ;
+            return dataLayer;
         }
-
-        public static UnitOfWork CreateUnitOfWork()
-        {
-            return new UnitOfWork();
-        }
-
         static XPDictionary PrepareDictionary()
         {
             var dict = new ReflectionDictionary();
             dict.GetDataStoreSchema(entityTypes);
             return dict;
         }
-
-        static void CreateDemoData()
+        public static UnitOfWork CreateUnitOfWork()
         {
-            using (var uow = CreateUnitOfWork())
+            return new UnitOfWork();
+        }
+
+        public static void CreateDemoData(Func<UnitOfWork> createUnitOfWork)
+        {
+            using (var uow = createUnitOfWork())
             {
                 if (!uow.Query<Order>().Any())
                 {
