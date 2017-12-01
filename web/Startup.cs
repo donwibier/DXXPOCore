@@ -33,7 +33,7 @@ namespace web
                 .AddJsonOptions(options =>
                 {
                     // use the custom resolver (above)
-                    options.SerializerSettings.ContractResolver = new XpoCompatibleContractResolver();
+                    options.SerializerSettings.ContractResolver = new XpoContractResolver();
                     // don't kill yourself over loop properties (probably not really needed now, I 
                     // inserted this originally to work around the This property on the XPO types)
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;

@@ -108,21 +108,4 @@ namespace web.Utils
         }
     }
 
-    // Custom resolver - skips properties found on the XPO base class types, since
-    // these are unnecessary and created issues with JSON serialization
-    public class XpoCompatibleContractResolver : DefaultContractResolver
-    {
-        static List<Type> incompatibleTypes = new List<Type>{
-            typeof(XPCustomObject),
-            typeof(XPBaseObject),
-            typeof(PersistentBase)
-        };
-
-        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-        {
-            if (incompatibleTypes.Contains(member.DeclaringType))
-                return null;
-            else return base.CreateProperty(member, memberSerialization);
-        }
-    }
 }
