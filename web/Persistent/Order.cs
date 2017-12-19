@@ -26,12 +26,12 @@ namespace web.Persistent
             set { SetPropertyValue("Client", ref _Client, value); }
         }
 
-        [Association("Order-OrderItems")]
+        [Association("Order-OrderItems"), Aggregated]
         public XPCollection<OrderItem> OrderItems
         {
             get { return GetCollection<OrderItem>("OrderItems"); }
         }
-        [PersistentAlias("OrderItems.Sum(Price)"), Aggregated]
+        [PersistentAlias("OrderItems.Sum(Price)")]
         public decimal TotalAmount
         {
             get { return Convert.ToDecimal(EvaluateAlias("TotalAmount")); }
